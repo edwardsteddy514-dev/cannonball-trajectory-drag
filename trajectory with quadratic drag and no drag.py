@@ -8,7 +8,7 @@ Cd = 0.47             # Drag coefficient for a sphere
 r = 0.05              # Radius of the cannonball (m)
 m = 5.0               # Mass of the cannonball (kg)
 A = np.pi * (r**2)    # Cross-sectional area of the cannonball (m^2)
-theta = 42.0          # Launch angle (degrees)
+theta = 45.0          # Launch angle (degrees)
 
 v0 = 120.0            # Initial velocity (m/s)
 vx0 = v0 * np.cos(np.radians(theta))  # Initial x-velocity
