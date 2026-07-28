@@ -11,7 +11,7 @@ Cd      = 0.47         # drag coefficient of a sphere
 rho     = 1.225        # kg/m^3, air density at sea level
  
 v0      = 120.0        # m/s, muzzle velocity
-theta0  = 42.0          # degrees, launch angle
+theta0  = 45.0          # degrees, launch angle
  
 A = np.pi * (diam / 2) ** 2      # cross-sectional area
 b = 0.5 * rho * Cd * A / m       # effective drag parameter (1/m)
