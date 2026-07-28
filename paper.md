@@ -4,7 +4,7 @@
 
 ## Abstract
 
-Classical projectile motion — the parabola every physics student derives — assumes away air resistance entirely. This project models a cannonball's trajectory under **quadratic drag** (the physically correct regime for a fast-moving, human-scale projectile) and compares it against the idealized no-drag case. Because drag introduces a nonlinear coupling between the horizontal and vertical equations of motion, no closed-form solution exists; the drag case is solved with a fourth-order Runge-Kutta (RK4) integrator built from scratch. The results show that drag doesn't just shrink the trajectory uniformly — it reshapes it, breaking the symmetric parabola into a skewed curve and shifting the optimal launch angle away from the textbook 45°.
+Classical projectile motion — the parabola every physics student derives — assumes away air resistance entirely. This project models a cannonball's trajectory under **quadratic drag** (the physically correct regime for a fast-moving, human-scale projectile) and compares it against the idealized no-drag case. Because drag introduces a nonlinear coupling between the horizontal and vertical equations of motion, no closed-form solution exists; the drag case is solved with a fourth-order Runge-Kutta (RK4) integrator. The results show that drag doesn't just shrink the trajectory uniformly — it reshapes it, breaking the symmetric parabola into a skewed curve and shifting the optimal launch angle away from the textbook 45°.
 
 ## 1. Introduction
 
@@ -45,17 +45,29 @@ Quadratic drag introduces a force opposing the velocity vector, with magnitude p
 
 $$\vec{F}_d = -\frac{1}{2}\rho C_d A\, v\, \vec{v}, \qquad v = \sqrt{v_x^2 + v_y^2}$$
 
-where $\rho$ is air density, $C_d$ the drag coefficient (≈0.47 for a sphere), and $A$ the cross-sectional area. Applying Newton's second law and dividing by mass $m$, with $b = \frac{\rho C_d A}{2m}$ bundled as a single **drag parameter**:
+where $\rho$ is air density, $C_d$ the drag coefficient (≈0.47 for a sphere), and $A$ the cross-sectional area. Newton's second law splits into:
 
 $$\dot{v}_x = -b\,v\,v_x, \qquad \dot{v}_y = -g - b\,v\,v_y$$
 
+where
+
+$$b = \frac{\rho C_d A}{2m}$$
+
 The key difference from the ideal case: $v = \sqrt{v_x^2+v_y^2}$ couples the two equations together. Neither can be solved independently of the other, and no elementary closed-form solution exists for this coupled nonlinear system — it must be integrated numerically.
 
-## 3. Numerical Method: RK4
+## 3. Numerical Method: Fourth-Order Runge-Kutta (RK4)
 
-The drag equations are first cast as a first-order system over the state vector $\vec{y} = (x, y, v_x, v_y)$:
+Define the state vector:
 
-$$\dot{\vec{y}} = f(\vec{y}) = \big(v_x,\ v_y,\ -bvv_x,\ -g-bvv_y\big)$$
+$$\vec{y} = (x, y, v_x, v_y)$$
+
+Then the system becomes:
+
+$$\dot{x} = v_x, \qquad \dot{y} = v_y, \qquad \dot{v}_x = -b\,v\,v_x, \qquad \dot{v}_y = -g - b\,v\,v_y$$
+
+Derivative function:
+
+$$f(\vec{y}) = (v_x,\ v_y,\ -bvv_x,\ -g-bvv_y)$$
 
 A fourth-order Runge-Kutta (RK4) integrator advances this state forward in fixed timesteps $dt$. Rather than using a single slope estimate per step (as the simpler, less accurate Euler's method does), RK4 samples the slope four times per step and combines them as a weighted average:
 
@@ -125,18 +137,21 @@ def derivatives(t, state):
     return [vx, vy, ax, ay]
 
 def hit_ground(t, state):
-    return state[1]  # Stop integration when y (height) is zero
+    return state[1]        # Stop integration when y (height) is zero
 hit_ground.terminal = True
 hit_ground.direction = -1
 
-t_span = (0, 100)  # Time span for the simulation
-initial_state = [x0, y0, vx0, vy0]  # Initial state vector
-t_eval = np.linspace(0, 100, 1000)  # Time points to evaluate the solution
+t_span = (0, 100)
+initial_state = [x0, y0, vx0, vy0]
+t_eval = np.linspace(0, 100, 1000)
 
-solution = solve_ivp(derivatives, t_span, initial_state, method='RK45', events=hit_ground, t_eval=t_eval)
+solution = solve_ivp(
+    derivatives, t_span, initial_state,
+    method='RK45', events=hit_ground, t_eval=t_eval
+)
 ```
 
-Two improvements over the fixed-step version: **adaptive step sizing** automatically takes finer steps where the trajectory curves quickly (e.g. near apex) and coarser steps where it doesn't, rather than using one fixed $dt$ everywhere; and **event-based termination** finds the precise moment $y=0$ is crossed through dense-output root-finding, rather than the linear-interpolation approximation the hand-rolled version relies on. At the drag-optimal launch angle found earlier (42°), this implementation gives a range of 996.2 m and a flight time of 14.61 s — consistent with the fixed-step results, confirming both implementations converge to the same physical answer.
+Two improvements over the fixed-step version: **adaptive step sizing** automatically takes finer steps where the trajectory curves quickly (e.g. near apex) and coarser steps where it doesn't, rather than using one fixed $dt$ everywhere; and **event-based termination** finds the precise moment $y=0$ is crossed through dense-output root-finding, rather than the linear-interpolation approximation the hand-rolled version relies on. At the drag-optimal launch angle found earlier (42°), this implementation gives a range of 996.19 m and a flight time of 14.61 s — consistent with the fixed-step results, confirming both implementations converge to the same physical answer.
 
 ## 5. Results
 
@@ -148,16 +163,17 @@ Simulating both models at $v_0 = 120\,$m/s and $\theta_0 = 45°$:
 | Max height | 367.0 m | 292.8 m |
 | Flight time | 17.30 s | 15.42 s |
 
-![trajectory plot at angle of 45 degrees](Figure_1.png)
+![Trajectory comparison at 45°](cannonball_comparison_45deg.png)
 
-At the optimum angle of $\theta_0 = 42°$ :
+At the drag-optimal angle of $\theta_0 = 42°$:
 
-| Metric |	Ideal (no drag) | With drag |
+| Metric | Ideal (no drag) | With drag |
+|---|---|---|
 | Range | 1459.8 m | 997.9 m |
 | Max height | 328.6 m | 264.3 m |
-| Flight time |	16.37 s | 14.65 s |
+| Flight time | 16.37 s | 14.65 s |
 
-![trajectory at optimal angle of 42 degrees](Figure_2.png)
+![Trajectory comparison at 42°](cannonball_comparison_42deg.png)
 
 Sweeping launch angle from 20° to 70° reveals that the drag case's optimal launch angle for maximum range is **42°**, not the ideal case's 45°.
 
@@ -183,4 +199,4 @@ This model holds air density and drag coefficient constant throughout the flight
 
 ## 8. Conclusion
 
-Quadratic drag transforms projectile motion from a two-line algebraic result into a genuinely nonlinear system requiring numerical integration. Building both models side by side — one closed-form, one via RK4 — makes concrete something often left abstract in introductory physics: that the "ideal" parabola is a simplification whose accuracy depends entirely on how draggy the object and how fast it's moving, and that even a well-understood numerical method like RK4 earns its complexity precisely where the physics stops being linear.
+Quadratic drag transforms projectile motion from a two-line algebraic result into a genuinely nonlinear system requiring numerical integration. Building both models side by side — one closed-form, one via RK4 — makes concrete something often left abstract in introductory physics: that the "ideal" parabola is a simplification whose accuracy depends entirely on how draggy the object is and how fast it's moving, and that even a well-understood numerical method like RK4 earns its complexity precisely where the physics stops being linear.
