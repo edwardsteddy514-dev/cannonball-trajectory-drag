@@ -43,7 +43,7 @@ This is the entire ideal-case solution — a handful of algebraic formulas, no i
 
 Quadratic drag introduces a force opposing the velocity vector, with magnitude proportional to $v^2$:
 
-$$\vec{F}_d = -\frac{1}{2}\rho C_d A\, v\, \vec{v}, \qquad v = \sqrt{v_x^2 + v_y^2}$$
+$$\vec{F}_d = -\frac{1}{2}\rho C_d A\ v\ \vec{v}, \qquad v = \sqrt{v_x^2 + v_y^2}$$
 
 where $\rho$ is air density, $C_d$ the drag coefficient (≈0.47 for a sphere), and $A$ the cross-sectional area. Newton's second law splits into:
 
