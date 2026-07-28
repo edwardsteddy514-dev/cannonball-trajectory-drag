@@ -75,7 +75,7 @@ $$f(\vec{y}) = (v_x,\ v_y,\ -bvv_x,\ -g-bvv_y)$$
 
 A fourth-order Runge-Kutta (RK4) integrator advances this state forward in fixed timesteps $dt$. Rather than using a single slope estimate per step (as the simpler, less accurate Euler's method does), RK4 samples the slope four times per step and combines them as a weighted average:
 
-$$k_1 = f(\vec y_n), \quad k_2 = f(\vec y_n + \tfrac12 dt\, k_1), \quad k_3 = f(\vec y_n + \tfrac12 dt\, k_2), \quad k_4 = f(\vec y_n + dt\, k_3)$$
+$$k_1 = f(\vec y_n), \quad k_2 = f(\vec y_n + \tfrac12 dt k_1), \quad k_3 = f(\vec y_n + \tfrac12 dt k_2), \quad k_4 = f(\vec y_n + dt k_3)$$
 
 $$\vec{y}_{n+1} = \vec{y}_n + \frac{dt}{6}\big(k_1 + 2k_2 + 2k_3 + k_4\big)$$
 
