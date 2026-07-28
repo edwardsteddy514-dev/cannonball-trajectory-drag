@@ -57,7 +57,7 @@ where
 
 $$b = \frac{\rho C_d A}{2m}$$
 
-The key difference from the ideal case: $v = \sqrt{v_x^2+v_y^2}$ couples the two equations together. Neither can be solved independently of the other, and no elementary closed-form solution exists for this coupled nonlinear system — it must be integrated numerically.
+The key difference from the ideal case: $v = \sqrt{v_x^2+v_y^2}$ couples the two equations together. Neither can be solved independently of the other, and no elementary closed-form solution exists for this coupled nonlinear system, it must be integrated numerically.
 
 ## 3. Numerical Method: Fourth-Order Runge-Kutta (RK4)
 
@@ -83,7 +83,7 @@ $$\vec{y}_{n+1} = \vec{y}_n + \frac{dt}{6}\big(k_1 + 2k_2 + 2k_3 + k_4\big)$$
 - $k_2, k_3$ are two successive refinements of the slope at the interval's midpoint.
 - $k_4$ is the slope at the (estimated) end of the interval.
 
-This gives local error of $O(dt^5)$ per step, far better than Euler's $O(dt^2)$, at the cost of four function evaluations instead of one. Because the drag dynamics are nonlinear but smooth (no stiffness), a fixed step size of $dt = 0.001\,$s proved accurate and stable.
+This gives local error of $O(dt^5)$ per step, far better than Euler's $O(dt^2)$, at the cost of four function evaluations instead of one. Because the drag dynamics are nonlinear but smooth (no stiffness), a fixed step size of $dt = 0.001$s proved accurate and stable.
 
 **Landing detection:** since the integrator only checks the sign of $y$ after each fixed step, the exact moment of impact is refined via linear interpolation between the last two points straddling $y=0$, rather than requiring an impractically small step size to land exactly on the ground.
 
