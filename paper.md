@@ -85,18 +85,25 @@ def derivs(state):
 
 def simulate(v0, theta0, dt=0.001, t_max=200.0):
     theta = np.radians(theta0)
-    state = np.array([0.0, 0.0, v0*np.cos(theta), v0*np.sin(theta)])
+    state = np.array([0.0, 0.0, v0 * np.cos(theta), v0 * np.sin(theta)])
     traj = [state.copy()]
     t = 0.0
     while state[1] >= 0 and t < t_max:
         k1 = derivs(state)
-        k2 = derivs(state + 0.5*dt*k1)
-        k3 = derivs(state + 0.5*dt*k2)
-        k4 = derivs(state + dt*k3)
-        state = state + (dt/6) * (k1 + 2*k2 + 2*k3 + k4)
+        k2 = derivs(state + 0.5 * dt * k1)
+        k3 = derivs(state + 0.5 * dt * k2)
+        k4 = derivs(state + dt * k3)
+        state = state + (dt / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
         t += dt
         traj.append(state.copy())
-    return np.array(traj)
+    traj = np.array(traj)
+    # linear interpolation to land exactly at y = 0
+    x1, y1 = traj[-2, 0], traj[-2, 1]
+    x2, y2 = traj[-1, 0], traj[-1, 1]
+    frac = y1 / (y1 - y2)
+    x_land = x1 + frac * (x2 - x1)
+    t_land = (t - dt) + frac * dt
+    return traj, x_land, t_land
 ```
 
 The drag parameter $b$ was computed from physical constants for a representative cannonball: a 5 kg iron sphere, 10 cm in diameter, at sea-level air density ($\rho = 1.225\,\text{kg/m}^3$, $C_d = 0.47$):
@@ -112,20 +119,21 @@ from scipy.integrate import solve_ivp
 
 def derivatives(t, state):
     x, y, vx, vy = state
-    v = np.hypot(vx, vy)
-    ax = -b * v * vx
-    ay = -g - b * v * vy
+    v = np.hypot(vx, vy)   # Total speed
+    ax = -b * v * vx       # Acceleration in x due to drag
+    ay = -g - b * v * vy   # Acceleration in y due to gravity and drag
     return [vx, vy, ax, ay]
 
 def hit_ground(t, state):
-    return state[1]        # triggers when height crosses zero
+    return state[1]  # Stop integration when y (height) is zero
 hit_ground.terminal = True
-hit_ground.direction = -1  # only trigger on the downward crossing
+hit_ground.direction = -1
 
-solution = solve_ivp(
-    derivatives, t_span=(0, 100), y0=[x0, y0, vx0, vy0],
-    method='RK45', events=hit_ground, t_eval=np.linspace(0, 100, 1000)
-)
+t_span = (0, 100)  # Time span for the simulation
+initial_state = [x0, y0, vx0, vy0]  # Initial state vector
+t_eval = np.linspace(0, 100, 1000)  # Time points to evaluate the solution
+
+solution = solve_ivp(derivatives, t_span, initial_state, method='RK45', events=hit_ground, t_eval=t_eval)
 ```
 
 Two improvements over the fixed-step version: **adaptive step sizing** automatically takes finer steps where the trajectory curves quickly (e.g. near apex) and coarser steps where it doesn't, rather than using one fixed $dt$ everywhere; and **event-based termination** finds the precise moment $y=0$ is crossed through dense-output root-finding, rather than the linear-interpolation approximation the hand-rolled version relies on. At the drag-optimal launch angle found earlier (42°), this implementation gives a range of 996.2 m and a flight time of 14.61 s — consistent with the fixed-step results, confirming both implementations converge to the same physical answer.
@@ -140,7 +148,16 @@ Simulating both models at $v_0 = 120\,$m/s and $\theta_0 = 45°$:
 | Max height | 367.0 m | 292.8 m |
 | Flight time | 17.30 s | 15.42 s |
 
-![Trajectory comparison](cannonball_comparison.png)
+![trajectory plot at angle of 45 degrees](Figure_1.png)
+
+At the optimum angle of $\theta_0 = 42°$ :
+
+| Metric |	Ideal (no drag) | With drag |
+| Range | 1459.8 m | 997.9 m |
+| Max height | 328.6 m | 264.3 m |
+| Flight time |	16.37 s | 14.65 s |
+
+![trajectory at optimal angle of 42 degrees](Figure_2.png)
 
 Sweeping launch angle from 20° to 70° reveals that the drag case's optimal launch angle for maximum range is **42°**, not the ideal case's 45°.
 
