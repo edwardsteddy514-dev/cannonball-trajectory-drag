@@ -45,9 +45,13 @@ Quadratic drag introduces a force opposing the velocity vector, with magnitude p
 
 $$\vec{F}_d = -\frac{1}{2}\rho C_d A v \vec{v}, \qquad v = \sqrt{v_x^2 + v_y^2}$$
 
-where $\rho$ is air density, $C_d$ the drag coefficient (≈0.47 for a sphere), and $A$ the cross-sectional area. Newton's second law splits into:
+where;
+$\rho$ is air density, 
+$C_d$ the drag coefficient (≈0.47 for a sphere), and 
+$A$ the cross-sectional area. 
+Newton's second law splits into:
 
-$$\dot{v}_x = -b\,v\,v_x, \qquad \dot{v}_y = -g - b\,v\,v_y$$
+$$a_x = -b v v_x, \qquad a_y = -g - b v v_y$$
 
 where
 
