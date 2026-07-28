@@ -92,17 +92,6 @@ print(f"\nOptimal launch angle for max range under drag: {best_angle_drag} deg (
 # ---------------------------------------------------------------
 # Plot
 # ---------------------------------------------------------------
-"""fig, (ax1) = plt.subplots(1, figsize=(13, 5))
- 
-ax1.plot(x_ideal, y_ideal, label="No drag (ideal)", lw=2, color="#1f77b4")
-ax1.plot(x_drag, y_drag, label="Quadratic drag", lw=2, color="#d62728")
-ax1.set_xlabel("Horizontal distance (m)")
-ax1.set_ylabel("Height (m)")
-ax1.set_title(f"Trajectory comparison ($v_0$={v0} m/s, $\\theta_0$={theta0}\u00b0)")
-ax1.legend()
-ax1.grid(alpha=0.3)
-ax1.set_ylim(bottom=0)"""
-
 plt.figure(figsize=(13, 5))
 plt.plot(x_ideal, y_ideal, label="No drag (ideal)", lw=2, color='navy', linestyle='--')
 plt.plot(x_drag, y_drag, label="Quadratic drag", lw=2, color="#d62728")
@@ -115,15 +104,3 @@ plt.grid(True, linestyle='--', alpha=0.7)
 plt.legend()
 plt.show()
  
-#ax2.plot(angles, ranges_drag, lw=2, color="#d62728", label="Range with drag")
-#ax2.axvline(45, color="#1f77b4", lw=2, linestyle="--", label="Ideal optimum (45\u00b0)")
-#ax2.axvline(best_angle_drag, color="#d62728", lw=1, linestyle=":",
-#           label=f"Drag optimum ({best_angle_drag}\u00b0)")
-#ax2.set_xlabel("Launch angle (deg)")
-#ax2.set_ylabel("Range (m)")
-#ax2.set_title("launch angle")
-#ax2.legend()
-#ax2.grid(alpha=0.3)
- 
-"""plt.tight_layout()
-plt.show()"""
