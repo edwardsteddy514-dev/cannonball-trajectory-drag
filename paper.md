@@ -23,7 +23,7 @@ and compares them on range, maximum height, flight time, and optimal launch angl
 
 With gravity as the only force, Newton's second law gives:
 
-$$\ddot{x} = 0, \qquad \ddot{y} = -g$$
+$$a_x = 0, \qquad a_y = -g$$
 
 Integrating twice (with initial speed $v_0$ and launch angle $\theta$) gives the closed-form position equations:
 
@@ -63,7 +63,7 @@ $$\vec{y} = (x, y, v_x, v_y)$$
 
 Then the system becomes:
 
-$$\dot{x} = v_x, \qquad \dot{y} = v_y, \qquad \dot{v}_x = -b\,v\,v_x, \qquad \dot{v}_y = -g - b\,v\,v_y$$
+$$\dot{x} = v_x, \qquad \dot{y} = v_y, \qquad \dot{v}_x = -b v v_x, \qquad \dot{v}_y = -g - b v v_y$$
 
 Derivative function:
 
