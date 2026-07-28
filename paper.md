@@ -4,11 +4,11 @@
 
 ## Abstract
 
-Classical projectile motion — the parabola every physics student derives — assumes away air resistance entirely. This project models a cannonball's trajectory under **quadratic drag** (the physically correct regime for a fast-moving, human-scale projectile) and compares it against the idealized no-drag case. Because drag introduces a nonlinear coupling between the horizontal and vertical equations of motion, no closed-form solution exists; the drag case is solved with a fourth-order Runge-Kutta (RK4) integrator. The results show that drag doesn't just shrink the trajectory uniformly — it reshapes it, breaking the symmetric parabola into a skewed curve and shifting the optimal launch angle away from the textbook 45°.
+Classical projectile motion, the parabola every physics student derives, assumes away air resistance entirely. This project models a cannonball's trajectory under **quadratic drag** (the physically correct regime for a fast-moving, human-scale projectile) and compares it against the idealized no-drag case. Because drag introduces a nonlinear coupling between the horizontal and vertical equations of motion, no closed-form solution exists; the drag case is solved with a fourth-order Runge-Kutta (RK4) integrator. The results show that drag doesn't just shrink the trajectory uniformly, it reshapes it, breaking the symmetric parabola into a skewed curve and shifting the optimal launch angle away from the textbook 45°.
 
 ## 1. Introduction
 
-A projectile launched with the only force being gravity follows a symmetric parabolic arc — a result so clean it's often the first non-trivial physics derivation students see. But real projectiles move through air, and at the speeds involved (on the order of 100 m/s for an actual cannonball), the drag force is not negligible and does not scale linearly with velocity. It scales with the *square* of velocity — a regime known as **quadratic drag**, dominant whenever the Reynolds number is high (fast-moving, human-scale objects in air, as opposed to, say, dust settling in still air).
+A projectile launched with the only force being gravity follows a symmetric parabolic arc, a result so clean it's often the first non-trivial physics derivation students see. But real projectiles move through air, and at the speeds involved (on the order of 100 m/s for an actual cannonball), the drag force is not negligible and does not scale linearly with velocity. It scales with the *square* of velocity, a regime known as **quadratic drag**, dominant whenever the Reynolds number is high (fast-moving, human-scale objects in air, as opposed to, say, dust settling in still air).
 
 This project builds both models side by side:
 
@@ -83,7 +83,7 @@ $$\vec{y}_{n+1} = \vec{y}_n + \frac{dt}{6}\big(k_1 + 2k_2 + 2k_3 + k_4\big)$$
 - $k_2, k_3$ are two successive refinements of the slope at the interval's midpoint.
 - $k_4$ is the slope at the (estimated) end of the interval.
 
-This gives local error of $O(dt^5)$ per step, far better than Euler's $O(dt^2)$, at the cost of four function evaluations instead of one. Because the drag dynamics are nonlinear but smooth (no stiffness), a fixed step size of $dt = 0.001\,$s proved accurate and stable.
+This gives local error of $O(dt^5)$ per step, far better than Euler's $O(dt^2)$, at the cost of four function evaluations instead of one. Because the drag dynamics are nonlinear but smooth (no stiffness), a fixed step size of dt = 0.001 s proved accurate and stable.
 
 **Landing detection:** since the integrator only checks the sign of $y$ after each fixed step, the exact moment of impact is refined via linear interpolation between the last two points straddling $y=0$, rather than requiring an impractically small step size to land exactly on the ground.
 
