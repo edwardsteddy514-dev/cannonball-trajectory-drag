@@ -83,7 +83,7 @@ $$\vec{y}_{n+1} = \vec{y}_n + \frac{dt}{6}\big(k_1 + 2k_2 + 2k_3 + k_4\big)$$
 - $k_2, k_3$ are two successive refinements of the slope at the interval's midpoint.
 - $k_4$ is the slope at the (estimated) end of the interval.
 
-This gives local error of $O(dt^5)$ per step — far better than Euler's $O(dt^2)$ — at the cost of four function evaluations instead of one. Because the drag dynamics are nonlinear but smooth (no stiffness), a fixed step size of $dt = 0.001\,$s proved accurate and stable.
+This gives local error of $O(dt^5)$ per step, far better than Euler's $O(dt^2)$, at the cost of four function evaluations instead of one. Because the drag dynamics are nonlinear but smooth (no stiffness), a fixed step size of $dt = 0.001\,$s proved accurate and stable.
 
 **Landing detection:** since the integrator only checks the sign of $y$ after each fixed step, the exact moment of impact is refined via linear interpolation between the last two points straddling $y=0$, rather than requiring an impractically small step size to land exactly on the ground.
 
@@ -155,7 +155,7 @@ solution = solve_ivp(
 )
 ```
 
-Two improvements over the fixed-step version: **adaptive step sizing** automatically takes finer steps where the trajectory curves quickly (e.g. near apex) and coarser steps where it doesn't, rather than using one fixed $dt$ everywhere; and **event-based termination** finds the precise moment $y=0$ is crossed through dense-output root-finding, rather than the linear-interpolation approximation the hand-rolled version relies on. At the drag-optimal launch angle found earlier (42°), this implementation gives a range of 996.19 m and a flight time of 14.61 s — consistent with the fixed-step results, confirming both implementations converge to the same physical answer.
+Two improvements over the fixed-step version: **adaptive step sizing** automatically takes finer steps where the trajectory curves quickly (e.g. near apex) and coarser steps where it doesn't, rather than using one fixed $dt$ everywhere; and **event-based termination** finds the precise moment $y=0$ is crossed through dense-output root-finding, rather than the linear-interpolation approximation the hand-rolled version relies on. At the drag-optimal launch angle found earlier (42°), this implementation gives a range of 996.19 m and a flight time of 14.61 s, consistent with the fixed-step results, confirming both implementations converge to the same physical answer.
 
 ## 5. Results
 
@@ -185,13 +185,13 @@ Sweeping launch angle from 20° to 70° reveals that the drag case's optimal lau
 
 Three findings stand out:
 
-**Range loss is substantial but not catastrophic.** A ~32% reduction in range for this ball's size and speed illustrates why real ballistics tables — for artillery, snipers, or any fast projectile — cannot use the ideal parabola formula and expect useful accuracy.
+**Range loss is substantial but not catastrophic.** A ~32% reduction in range for this ball's size and speed illustrates why real ballistics tables for artillery, snipers, or any fast projectile, cannot use the ideal parabola formula and expect useful accuracy.
 
 **The trajectory shape is asymmetric, not just smaller.** The drag trajectory rises nearly as steeply as the ideal one early on (drag hasn't yet had time to act at high initial speed) but falls more steeply than it rose. This happens because drag continuously bleeds horizontal velocity throughout the flight, while gravity's vertical pull continues unopposed by an equivalent decelerating force on the way down.
 
-**45° is no longer optimal.** Under drag, a flatter launch angle (42° here) outperforms 45°, because it front-loads horizontal velocity before drag has as much time to sap it — a small but real correction that matters for anything from historical artillery gunnery to modern ballistic calculators.
+**45° is no longer optimal.** Under drag, a flatter launch angle (42° here) outperforms 45°, because it front-loads horizontal velocity before drag has as much time to sap it, a small but real correction that matters for anything from historical artillery gunnery to modern ballistic calculators.
 
-**A single parameter governs everything.** The drag parameter $b = \frac{\rho C_d A}{2m}$ — conceptually similar to the ballistic coefficient used in exterior ballistics — controls how far a given trajectory departs from the ideal case. Heavy, dense, streamlined projectiles (small $A$, large $m$) stay close to ideal; light or draggy ones diverge sharply.
+**A single parameter governs everything.** The drag parameter $b = \frac{\rho C_d A}{2m}$, conceptually similar to the ballistic coefficient used in exterior ballistics, controls how far a given trajectory departs from the ideal case. Heavy, dense, streamlined projectiles (small $A$, large $m$) stay close to ideal; light or draggy ones diverge sharply.
 
 ## 7. Limitations and Future Work
 
@@ -203,4 +203,4 @@ This model holds air density and drag coefficient constant throughout the flight
 
 ## 8. Conclusion
 
-Quadratic drag transforms projectile motion from a two-line algebraic result into a genuinely nonlinear system requiring numerical integration. Building both models side by side — one closed-form, one via RK4 — makes concrete something often left abstract in introductory physics: that the "ideal" parabola is a simplification whose accuracy depends entirely on how draggy the object is and how fast it's moving, and that even a well-understood numerical method like RK4 earns its complexity precisely where the physics stops being linear.
+Quadratic drag transforms projectile motion from a two-line algebraic result into a genuinely nonlinear system requiring numerical integration. Building both models side by side, one closed-form, one via RK4, makes concrete something often left abstract in introductory physics: that the "ideal" parabola is a simplification whose accuracy depends entirely on how draggy the object is and how fast it's moving, and that even a well-understood numerical method like RK4 earns its complexity precisely where the physics stops being linear.
