@@ -167,7 +167,7 @@ Simulating both models at $v_0 = 120\,$m/s and $\theta_0 = 45°$:
 | Max height | 367.0 m | 292.8 m |
 | Flight time | 17.30 s | 15.42 s |
 
-![Trajectory comparison at 45°](cannonball_comparison_45deg.png)
+![Trajectory comparison at 45°](Figure_1.png)
 
 At the drag-optimal angle of $\theta_0 = 42°$:
 
@@ -177,7 +177,7 @@ At the drag-optimal angle of $\theta_0 = 42°$:
 | Max height | 328.6 m | 264.3 m |
 | Flight time | 16.37 s | 14.65 s |
 
-![Trajectory comparison at 42°](cannonball_comparison_42deg.png)
+![Trajectory comparison at 42°](Figure_2.png)
 
 Sweeping launch angle from 20° to 70° reveals that the drag case's optimal launch angle for maximum range is **42°**, not the ideal case's 45°.
 
